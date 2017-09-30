@@ -19,6 +19,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -80,6 +82,7 @@ public class LoginOrRegister extends AppCompatActivity{
         setContentView(R.layout.activity_login_or_register);
         ButterKnife.bind(this);
 
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -94,8 +97,8 @@ public class LoginOrRegister extends AppCompatActivity{
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mProgressView.setVisibility(View.VISIBLE);
                 attemptLogin();
+
             }
         });
 
@@ -115,13 +118,6 @@ public class LoginOrRegister extends AppCompatActivity{
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mProgressView.setVisibility(View.GONE);
-            }
-        }, 2000);
 
 
         if (mAuthTask != null) {
@@ -165,9 +161,17 @@ public class LoginOrRegister extends AppCompatActivity{
         if (cancel) {
             focusView.requestFocus();
         } else {
-            returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
-            setResult(2, returnIntent);
-            finish();
+            mProgressView.setVisibility(View.VISIBLE);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mProgressView.setVisibility(View.GONE);
+                    returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
+                    setResult(2, returnIntent);
+                    finish();
+                }
+            }, 2000);
+
             //mAuthTask = new UserLoginTask(username, password);
             //mAuthTask.execute((Void) null);
         }
@@ -178,6 +182,7 @@ public class LoginOrRegister extends AppCompatActivity{
         Matcher m = p.matcher(word);
         return m.matches();
     }
+
 
 
     /**
