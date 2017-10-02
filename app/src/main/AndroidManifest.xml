@@ -23,8 +23,7 @@
         <activity
             android:name=".MainScreen"
             android:label="@string/title_activity_main_screen"
-            android:permission="scos.permission.ACCESSSCOS"
-            android:exported="true">
+            android:permission="scos.permission.ACCESSSCOS">
             <intent-filter>
                 <action android:name="scos.intent.action.SCOSMAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

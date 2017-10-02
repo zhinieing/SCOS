@@ -62,13 +62,19 @@ public class MainScreen extends AppCompatActivity {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        String message = getIntent().getStringExtra(SCOSEntry.EXTRA_MESSAGE);
-        if (!message.equals("FromEntry")) {
-            navigation.getMenu().removeItem(R.id.navigation_ordering);
-            navigation.getMenu().removeItem(R.id.navigation_myorder);
-        }else{
+        try{
+            String message = getIntent().getStringExtra(SCOSEntry.EXTRA_MESSAGE);
+            if (!message.equals("FromEntry")) {
+                navigation.getMenu().removeItem(R.id.navigation_ordering);
+                navigation.getMenu().removeItem(R.id.navigation_myorder);
+            }else{
+                disableShiftMode(navigation);
+            }
+        }
+        catch (Exception e){
             disableShiftMode(navigation);
         }
+
 
     }
 
