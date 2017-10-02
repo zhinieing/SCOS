@@ -42,6 +42,7 @@ public class MainScreen extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_myorder);
                     return true;
                 case R.id.navigation_login:
+                    //跳转到登录界面
                     Intent loginIntent = new Intent(MainScreen.this, LoginOrRegister.class);
                     startActivityForResult(loginIntent, REQUESTCODE);
                     return true;
@@ -78,6 +79,7 @@ public class MainScreen extends AppCompatActivity {
 
     }
 
+    //disableShiftMode函数是为了消除当menuitem>3时产生的动画效果
     public static void disableShiftMode(BottomNavigationView view) {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
         try {
@@ -104,8 +106,6 @@ public class MainScreen extends AppCompatActivity {
         if(resultCode == 2){
             if(requestCode == REQUESTCODE){
                 String returnMessage = data.getStringExtra(LoginOrRegister.RETURN_TAG);
-                //Toast.makeText(getApplicationContext(), returnMessage, Toast.LENGTH_LONG).show();
-
                 if(returnMessage.equals("LoginSuccess")){
                     if(navigation.getMenu().size() == 2){
                         navigation.getMenu().add(0, R.id.navigation_ordering, 0, R.string.title_ordering)
