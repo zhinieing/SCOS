@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="es.source.code.activity.FoodView">
+
+    <item
+        android:id="@+id/ordered_food"
+        android:orderInCategory="1"
+        android:title="@string/ordered_food"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/look_order"
+        android:orderInCategory="2"
+        android:title="@string/look_order"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/call_service"
+        android:orderInCategory="3"
+        android:title="@string/call_service"
+        app:showAsAction="never" />
+</menu>

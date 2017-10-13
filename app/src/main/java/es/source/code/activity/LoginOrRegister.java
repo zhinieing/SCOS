@@ -1,64 +1,45 @@
 package es.source.code.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Handler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.Manifest.permission.READ_CONTACTS;
+import es.source.code.model.User;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginOrRegister extends AppCompatActivity{
+public class LoginOrRegister extends AppCompatActivity {
 
     public final static String RETURN_TAG = "es.source.code.activity.RETURN";
 
     Intent returnIntent = new Intent();
 
-    private android.os.Handler mHandler = new android.os.Handler();
+    private Handler mHandler = new Handler();
 
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
+    private Boolean oldUser = true;
+
+    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
-    };
+    };*/
 
     @BindView(R.id.login_progress)
     ProgressBar mProgressView;
@@ -68,13 +49,11 @@ public class LoginOrRegister extends AppCompatActivity{
     EditText mPasswordView;
     @BindView(R.id.email_sign_in_button)
     Button mEmailSignInButton;
-    @BindView(R.id.return_button)
-    Button mReturnButton;
+    @BindView(R.id.email_sign_up_button)
+    Button mEmailSignUpButton;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,32 +61,33 @@ public class LoginOrRegister extends AppCompatActivity{
         setContentView(R.layout.activity_login_or_register);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
 
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        /*mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    //attemptLogin();
+                    attemptLogin();
                     return true;
                 }
                 return false;
             }
-        });
+        });*/
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-
             }
         });
 
-        mReturnButton.setOnClickListener(new OnClickListener() {
+        mEmailSignUpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnIntent.putExtra(RETURN_TAG, "Return");
-                setResult(2, returnIntent);
-                finish();
+                oldUser = false;
+                attemptLogin();
             }
         });
     }
@@ -118,11 +98,6 @@ public class LoginOrRegister extends AppCompatActivity{
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-
-
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -162,12 +137,26 @@ public class LoginOrRegister extends AppCompatActivity{
             focusView.requestFocus();
         } else {
             mProgressView.setVisibility(View.VISIBLE);
+
+            User loginUser = new User();
+            loginUser.setUserName(username);
+            loginUser.setPassword(password);
+            if(oldUser){
+                loginUser.setOldUser(oldUser);
+                returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
+                returnIntent.putExtra("userData", loginUser);
+                setResult(RESULT_OK, returnIntent);
+            } else {
+                loginUser.setOldUser(oldUser);
+                returnIntent.putExtra(RETURN_TAG, "RegisterSuccess");
+                returnIntent.putExtra("userData", loginUser);
+                setResult(RESULT_FIRST_USER, returnIntent);
+            }
+
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mProgressView.setVisibility(View.GONE);
-                    returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
-                    setResult(2, returnIntent);
                     finish();
                 }
             }, 2000);
@@ -184,12 +173,19 @@ public class LoginOrRegister extends AppCompatActivity{
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            returnIntent.putExtra(RETURN_TAG, "Return");
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+
+    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
@@ -240,6 +236,6 @@ public class LoginOrRegister extends AppCompatActivity{
             mAuthTask = null;
             mProgressView.setVisibility(View.GONE);
         }
-    }
+    }*/
 }
 

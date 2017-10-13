@@ -26,13 +26,32 @@
             android:permission="scos.permission.ACCESSSCOS">
             <intent-filter>
                 <action android:name="scos.intent.action.SCOSMAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="scos.intent.category.SCOSLAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginOrRegister"
-            android:label="@string/title_activity_login_or_register"></activity>
+            android:label="@string/title_activity_login_or_register" />
+        <activity
+            android:name=".FoodView"
+            android:label="@string/title_activity_food_view"
+            android:parentActivityName=".MainScreen"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.source.code.activity.MainScreen" />
+        </activity>
+        <activity
+            android:name=".FoodOrderView"
+            android:label="@string/title_activity_food_order_view"
+            android:parentActivityName=".MainScreen"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.source.code.activity.MainScreen" />
+        </activity>
     </application>
 
 </manifest>
