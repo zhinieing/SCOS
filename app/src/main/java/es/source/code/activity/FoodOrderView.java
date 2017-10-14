@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,8 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.source.code.model.Food;
 
 public class FoodOrderView extends AppCompatActivity {
 
@@ -85,6 +90,9 @@ public class FoodOrderView extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        RecyclerView.Adapter foodOrderAdapter;
+        ArrayList<Food> foods;
+
         public PlaceholderFragment() {
         }
 
@@ -104,6 +112,29 @@ public class FoodOrderView extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_food_order_view, container, false);
+
+            RecyclerView foodOrderList = (RecyclerView) rootView.findViewById(R.id.food_order_list);
+
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            foodOrderList.setLayoutManager(llm);
+
+            foods = new ArrayList<Food>();
+            for (int i = 0; i < 15; i++) {
+                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, "", "", 1);
+                foods.add(food1);
+            }
+
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+                case 1:
+                    foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, false);
+                    foodOrderList.setAdapter(foodOrderAdapter);
+                    break;
+                case 2:
+                    foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, true);
+                    foodOrderList.setAdapter(foodOrderAdapter);
+                    break;
+            }
 
             return rootView;
         }

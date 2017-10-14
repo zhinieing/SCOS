@@ -135,31 +135,31 @@ public class FoodView extends AppCompatActivity {
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
                     for (int i = 0; i < 15; i++) {
-                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, "", "");
+                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, "", "", 1);
                         foods.add(food1);
                     }
                     break;
                 case 2:
                     for (int i = 0; i < 15; i++) {
-                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, "", "");
+                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, "", "", 1);
                         foods.add(food2);
                     }
                     break;
                 case 3:
                     for (int i = 0; i < 15; i++) {
-                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, "", "");
+                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, "", "", 1);
                         foods.add(food3);
                     }
                     break;
                 case 4:
                     for (int i = 0; i < 15; i++) {
-                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, "", "");
+                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, "", "", 1);
                         foods.add(food4);
                     }
                     break;
             }
 
-            foodAdapter = new FoodRecycleViewAdapter(container.getContext(), foods);
+            foodAdapter = new FoodRvAdapter(container.getContext(), foods);
             foodList.setAdapter(foodAdapter);
 
             return rootView;

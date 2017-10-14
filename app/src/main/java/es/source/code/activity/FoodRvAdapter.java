@@ -17,24 +17,24 @@ import es.source.code.model.Food;
  * Created by pengming on 2017/10/13.
  */
 
-public class FoodRecycleViewAdapter extends RecyclerView.Adapter<FoodRecycleViewAdapter.MyViewHolder>{
+public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHolder>{
     private Context context;
     private ArrayList<Food> foods;
 
-    public FoodRecycleViewAdapter(Context context, ArrayList<Food> foods){
+    public FoodRvAdapter(Context context, ArrayList<Food> foods){
         this.context = context;
         this.foods = foods;
     }
 
     @Override
-    public FoodRecycleViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.recycleview_layout, parent, false);
+    public FoodRvAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.food_rv_layout, parent, false);
         MyViewHolder viewHolder = new MyViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(FoodRecycleViewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(FoodRvAdapter.MyViewHolder holder, int position) {
         holder.foodName.setText(foods.get(position).getFoodname());
         holder.foodPrice.setText(foods.get(position).getFoodprice());
 
