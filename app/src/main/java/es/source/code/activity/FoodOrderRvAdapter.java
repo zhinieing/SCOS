@@ -49,10 +49,12 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
             holder.foodNameRight.setText(foods.get(position).getFoodname());
             holder.foodPriceRight.setText(foods.get(position).getFoodprice());
             holder.foodNumberRight.setText(String.valueOf(foods.get(position).getNumber()));
+            holder.foodCommentRight.setText(foods.get(position).getComment());
         } else {
             holder.foodNameLeft.setText(foods.get(position).getFoodname());
             holder.foodPriceLeft.setText(foods.get(position).getFoodprice());
             holder.foodNumberLeft.setText(String.valueOf(foods.get(position).getNumber()));
+            holder.foodCommentLeft.setText(foods.get(position).getComment());
         }
     }
 
@@ -63,24 +65,26 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView foodNameLeft, foodPriceLeft, foodNumberLeft;
+        TextView foodNameLeft, foodPriceLeft, foodNumberLeft, foodCommentLeft;
         Button returnFood;
 
-        TextView foodNameRight, foodPriceRight, foodNumberRight;
+        TextView foodNameRight, foodPriceRight, foodNumberRight, foodCommentRight;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             if(isOrdered){
-                foodNameRight = (TextView) itemView.findViewById(R.id.food_name_right);
-                foodPriceRight = (TextView) itemView.findViewById(R.id.food_price_right);
-                foodNumberRight = (TextView) itemView.findViewById(R.id.food_number_right);
+                foodNameRight = itemView.findViewById(R.id.food_name_right);
+                foodPriceRight = itemView.findViewById(R.id.food_price_right);
+                foodNumberRight = itemView.findViewById(R.id.food_number_right);
+                foodCommentRight = itemView.findViewById(R.id.food_comment_right);
             } else {
-                foodNameLeft = (TextView) itemView.findViewById(R.id.food_name_left);
-                foodPriceLeft = (TextView) itemView.findViewById(R.id.food_price_left);
-                foodNumberLeft = (TextView) itemView.findViewById(R.id.food_number_left);
+                foodNameLeft = itemView.findViewById(R.id.food_name_left);
+                foodPriceLeft = itemView.findViewById(R.id.food_price_left);
+                foodNumberLeft = itemView.findViewById(R.id.food_number_left);
+                foodCommentLeft = itemView.findViewById(R.id.food_comment_left);
 
-                returnFood = (Button) itemView.findViewById(R.id.return_food);
+                returnFood = itemView.findViewById(R.id.return_food);
                 returnFood.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

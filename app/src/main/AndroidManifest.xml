@@ -52,6 +52,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="es.source.code.activity.MainScreen" />
         </activity>
+        <activity
+            android:name=".FoodDetailed"
+            android:label="@string/title_activity_food_detailed"
+            android:parentActivityName=".FoodView"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.source.code.activity.FoodView" />
+        </activity>
     </application>
 
 </manifest>

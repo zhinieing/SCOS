@@ -26,4 +26,13 @@
     <string name="look_order">查看订单</string>
     <string name="call_service">呼叫服务</string>
     <string name="title_activity_food_order_view">FoodOrderView</string>
+    <string name="order_number">总数：0</string>
+    <string name="order_price">总价：¥0</string>
+    <string name="order_submit">提交订单</string>
+    <string name="order_pay">结账</string>
+    <string name="title_activity_food_detailed">FoodDetailed</string>
+    <string name="default_food_name">水煮肉片</string>
+    <string name="default_food_price">¥ 30</string>
+    <string name="default_comment">写一些备注吧</string>
+    <string name="submit_comment">提交备注</string>
 </resources>

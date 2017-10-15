@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import es.source.code.model.Food;
 
 public class FoodView extends AppCompatActivity {
@@ -101,8 +102,12 @@ public class FoodView extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        RecyclerView.Adapter foodAdapter;
+        FoodRvAdapter foodAdapter;
         ArrayList<Food> foods;
+
+        @BindView(R.id.food_list)
+        RecyclerView foodList;
+        Unbinder unbinder;
 
 
         public PlaceholderFragment() {
@@ -125,7 +130,7 @@ public class FoodView extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_food_view, container, false);
-            RecyclerView foodList = (RecyclerView) rootView.findViewById(R.id.food_list);
+            unbinder = ButterKnife.bind(this, rootView);
 
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -162,7 +167,20 @@ public class FoodView extends AppCompatActivity {
             foodAdapter = new FoodRvAdapter(container.getContext(), foods);
             foodList.setAdapter(foodAdapter);
 
+            foodAdapter.setOnItemClickListener(new FoodRvAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+
+                }
+            });
+
             return rootView;
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            unbinder.unbind();
         }
     }
 

@@ -17,11 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import es.source.code.model.Food;
 
 public class FoodOrderView extends AppCompatActivity {
@@ -90,8 +93,18 @@ public class FoodOrderView extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        RecyclerView.Adapter foodOrderAdapter;
+        FoodOrderRvAdapter foodOrderAdapter;
         ArrayList<Food> foods;
+
+        @BindView(R.id.food_order_list)
+        RecyclerView foodOrderList;
+        @BindView(R.id.order_number)
+        TextView orderNumber;
+        @BindView(R.id.order_price)
+        TextView orderPrice;
+        @BindView(R.id.order_submit)
+        Button orderSubmit;
+        Unbinder unbinder;
 
         public PlaceholderFragment() {
         }
@@ -112,8 +125,7 @@ public class FoodOrderView extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_food_order_view, container, false);
-
-            RecyclerView foodOrderList = (RecyclerView) rootView.findViewById(R.id.food_order_list);
+            unbinder = ButterKnife.bind(this, rootView);
 
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -121,22 +133,30 @@ public class FoodOrderView extends AppCompatActivity {
 
             foods = new ArrayList<Food>();
             for (int i = 0; i < 15; i++) {
-                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, "", "", 1);
+                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, "", "热菜", 1);
                 foods.add(food1);
             }
 
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
+                    orderSubmit.setText(R.string.order_submit);
                     foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, false);
                     foodOrderList.setAdapter(foodOrderAdapter);
                     break;
                 case 2:
+                    orderSubmit.setText(R.string.order_pay);
                     foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, true);
                     foodOrderList.setAdapter(foodOrderAdapter);
                     break;
             }
 
             return rootView;
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            unbinder.unbind();
         }
     }
 

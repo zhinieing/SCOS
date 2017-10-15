@@ -8,14 +8,14 @@ public class Food {
     private String foodname;
     private String foodprice;
     private String imageurl;
-    private String comments;
+    private String comment;
     private int number;
 
-    public Food(String foodname, String foodprice, String imageurl, String comments, int number){
+    public Food(String foodname, String foodprice, String imageurl, String comment, int number){
         this.foodname = foodname;
         this.foodprice = foodprice;
         this.imageurl = imageurl;
-        this.comments = comments;
+        this.comment = comment;
         this.number = number;
     }
 
@@ -43,12 +43,12 @@ public class Food {
         this.imageurl = imageurl;
     }
 
-    public String getComments() {
-        return comments;
+    public String getComment() {
+        return comment;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public int getNumber() {
