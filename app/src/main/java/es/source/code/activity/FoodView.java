@@ -1,5 +1,6 @@
 package es.source.code.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import es.source.code.model.Food;
+import es.source.code.model.User;
 
 public class FoodView extends AppCompatActivity {
 
@@ -43,7 +46,7 @@ public class FoodView extends AppCompatActivity {
      * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,12 @@ public class FoodView extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(mViewPager);
 
+
+        try{
+            user = (User) getIntent().getSerializableExtra("foodViewUser");
+        } catch (Exception e){
+
+        }
     }
 
 
@@ -79,10 +88,16 @@ public class FoodView extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.ordered_food:
-
+                Intent orderedFood = new Intent(this, FoodOrderView.class);
+                orderedFood.putExtra("startPage", 0);
+                orderedFood.putExtra("foodViewUser", user);
+                startActivity(orderedFood);
                 break;
             case R.id.look_order:
-
+                Intent lookOrder = new Intent(this, FoodOrderView.class);
+                lookOrder.putExtra("startPage", 1);
+                lookOrder.putExtra("foodViewUser", user);
+                startActivity(lookOrder);
                 break;
             case R.id.call_service:
 
@@ -127,7 +142,7 @@ public class FoodView extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_food_view, container, false);
             unbinder = ButterKnife.bind(this, rootView);
@@ -139,26 +154,26 @@ public class FoodView extends AppCompatActivity {
             foods = new ArrayList<Food>();
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
-                    for (int i = 0; i < 15; i++) {
-                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, "", "", 1);
+                    for (int i = 0; i < 10; i++) {
+                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, R.drawable.food1, "", 1, false);
                         foods.add(food1);
                     }
                     break;
                 case 2:
                     for (int i = 0; i < 15; i++) {
-                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, "", "", 1);
+                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, R.drawable.food2, "", 1, false);
                         foods.add(food2);
                     }
                     break;
                 case 3:
                     for (int i = 0; i < 15; i++) {
-                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, "", "", 1);
+                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, R.drawable.food3, "", 1, false);
                         foods.add(food3);
                     }
                     break;
                 case 4:
                     for (int i = 0; i < 15; i++) {
-                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, "", "", 1);
+                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, R.drawable.food4, "", 1, false);
                         foods.add(food4);
                     }
                     break;
@@ -171,6 +186,11 @@ public class FoodView extends AppCompatActivity {
                 @Override
                 public void onItemClick(View view, int position) {
 
+                    Intent foodDetail = new Intent(view.getContext(), FoodDetailed.class);
+                    foodDetail.putExtra("foods", foods);
+                    foodDetail.putExtra("position", position);
+
+                    startActivity(foodDetail);
                 }
             });
 

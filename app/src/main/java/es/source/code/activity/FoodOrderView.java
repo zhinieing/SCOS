@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import es.source.code.model.Food;
+import es.source.code.model.User;
 
 public class FoodOrderView extends AppCompatActivity {
 
@@ -45,7 +47,6 @@ public class FoodOrderView extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,14 @@ public class FoodOrderView extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         tabLayout.setupWithViewPager(mViewPager);
+
+
+        try{
+            int startPage = getIntent().getIntExtra("startPage", 0);
+            mViewPager.setCurrentItem(startPage);
+        } catch (Exception e){
+
+        }
 
     }
 
@@ -95,6 +104,8 @@ public class FoodOrderView extends AppCompatActivity {
 
         FoodOrderRvAdapter foodOrderAdapter;
         ArrayList<Food> foods;
+
+        User user;
 
         @BindView(R.id.food_order_list)
         RecyclerView foodOrderList;
@@ -133,8 +144,29 @@ public class FoodOrderView extends AppCompatActivity {
 
             foods = new ArrayList<Food>();
             for (int i = 0; i < 15; i++) {
-                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, "", "热菜", 1);
+                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food5, "这是一道热菜", 1, false);
                 foods.add(food1);
+            }
+
+            /*try{
+
+            } catch (Exception e){
+
+            }*/
+
+
+            try{
+                user = (User) getActivity().getIntent().getSerializableExtra("foodOrderViewUser");
+            } catch (Exception e){
+
+            }
+
+            if(user == null){
+                try{
+                    user = (User) getActivity().getIntent().getSerializableExtra("foodViewUser");
+                } catch (Exception e){
+
+                }
             }
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
@@ -145,6 +177,15 @@ public class FoodOrderView extends AppCompatActivity {
                     break;
                 case 2:
                     orderSubmit.setText(R.string.order_pay);
+                    orderSubmit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(user != null){
+                                if(user.getOldUser())
+                                    Toast.makeText(v.getContext(), "您好，老顾客，本次你可享受7折优惠", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, true);
                     foodOrderList.setAdapter(foodOrderAdapter);
                     break;

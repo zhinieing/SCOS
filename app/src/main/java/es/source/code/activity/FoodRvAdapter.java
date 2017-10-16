@@ -43,9 +43,24 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(FoodRvAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final FoodRvAdapter.MyViewHolder holder, final int position) {
         holder.foodName.setText(foods.get(position).getFoodname());
         holder.foodPrice.setText(foods.get(position).getFoodprice());
+
+        holder.orderFood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!foods.get(position).getIsOrdered()){
+                    Toast.makeText(context, "点菜成功", Toast.LENGTH_SHORT).show();
+                    foods.get(position).setIsOrdered(true);
+                    holder.orderFood.setText(R.string.food_return);
+                } else {
+                    Toast.makeText(context, "退点成功", Toast.LENGTH_SHORT).show();
+                    foods.get(position).setIsOrdered(false);
+                    holder.orderFood.setText(R.string.food_ordering);
+                }
+            }
+        });
 
         holder.itemView.setTag(position);
     }
@@ -75,19 +90,6 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHold
             foodName = itemView.findViewById(R.id.food_name);
             foodPrice = itemView.findViewById(R.id.food_price);
             orderFood = itemView.findViewById(R.id.order_food);
-            orderFood.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(orderFood.getText().toString().equals("点菜")){
-                        Toast.makeText(context, "点菜成功", Toast.LENGTH_SHORT).show();
-                        orderFood.setText(R.string.food_return);
-                    } else {
-                        Toast.makeText(context, "退点成功", Toast.LENGTH_SHORT).show();
-                        orderFood.setText(R.string.food_ordering);
-                    }
-
-                }
-            });
         }
     }
 }

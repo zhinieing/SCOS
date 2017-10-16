@@ -20,12 +20,12 @@ import es.source.code.model.Food;
 public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<Food> foods;
-    private Boolean isOrdered;
+    private Boolean isInOrderList;
 
-    public FoodOrderRvAdapter(Context context, ArrayList<Food> foods, Boolean isOrdered){
+    public FoodOrderRvAdapter(Context context, ArrayList<Food> foods, Boolean isInOrderList){
         this.context = context;
         this.foods = foods;
-        this.isOrdered = isOrdered;
+        this.isInOrderList = isInOrderList;
     }
 
 
@@ -33,7 +33,7 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
     public FoodOrderRvAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView;
 
-        if(isOrdered)
+        if(isInOrderList)
             itemView = LayoutInflater.from(context).inflate(R.layout.food_order_rvright_layout, parent, false);
         else
             itemView = LayoutInflater.from(context).inflate(R.layout.food_order_rvleft_layout, parent, false);
@@ -43,9 +43,9 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        if(isOrdered){
+        if(isInOrderList){
             holder.foodNameRight.setText(foods.get(position).getFoodname());
             holder.foodPriceRight.setText(foods.get(position).getFoodprice());
             holder.foodNumberRight.setText(String.valueOf(foods.get(position).getNumber()));
@@ -55,6 +55,21 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
             holder.foodPriceLeft.setText(foods.get(position).getFoodprice());
             holder.foodNumberLeft.setText(String.valueOf(foods.get(position).getNumber()));
             holder.foodCommentLeft.setText(foods.get(position).getComment());
+
+            holder.returnFood.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!foods.get(position).getIsOrdered()){
+                        Toast.makeText(context, "点菜成功", Toast.LENGTH_SHORT).show();
+                        foods.get(position).setIsOrdered(true);
+                        holder.returnFood.setText(R.string.food_return);
+                    } else {
+                        Toast.makeText(context, "退点成功", Toast.LENGTH_SHORT).show();
+                        foods.get(position).setIsOrdered(false);
+                        holder.returnFood.setText(R.string.food_ordering);
+                    }
+                }
+            });
         }
     }
 
@@ -73,7 +88,7 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            if(isOrdered){
+            if(isInOrderList){
                 foodNameRight = itemView.findViewById(R.id.food_name_right);
                 foodPriceRight = itemView.findViewById(R.id.food_price_right);
                 foodNumberRight = itemView.findViewById(R.id.food_number_right);
@@ -85,18 +100,6 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
                 foodCommentLeft = itemView.findViewById(R.id.food_comment_left);
 
                 returnFood = itemView.findViewById(R.id.return_food);
-                returnFood.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(returnFood.getText().toString().equals("退点")){
-                            Toast.makeText(context, "退点成功", Toast.LENGTH_SHORT).show();
-                            returnFood.setText(R.string.food_ordering);
-                        } else {
-                            Toast.makeText(context, "点菜成功", Toast.LENGTH_SHORT).show();
-                            returnFood.setText(R.string.food_return);
-                        }
-                    }
-                });
             }
         }
     }

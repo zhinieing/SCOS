@@ -37,9 +37,6 @@ public class LoginOrRegister extends AppCompatActivity {
 
     private Boolean oldUser = true;
 
-    /*private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };*/
 
     @BindView(R.id.login_progress)
     ProgressBar mProgressView;

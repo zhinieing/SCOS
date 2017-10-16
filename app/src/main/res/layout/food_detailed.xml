@@ -21,78 +21,17 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
 
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text="@string/default_food_name" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="5dp" />
-
-    <TextView
-        android:id="@+id/item_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        tools:text="@string/default_food_price" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="20dp" />
-
-    <com.yarolegovich.discretescrollview.DiscreteScrollView
+    <com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager
         android:id="@+id/item_picker"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <Button
-        android:id="@+id/order_status"
-        android:layout_width="wrap_content"
-        android:text="@string/food_ordering"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        app:icvp_interpolator="@android:anim/accelerate_decelerate_interpolator"
+        app:icvp_scroll_duration="250"
+        app:icvp_center_page_scale_offset="30dp"
+        app:icvp_min_page_scale_offset="5dp"
+        app:icvp_max_page_scale="0.8"
+        app:icvp_min_page_scale="0.55"
+        app:icvp_medium_scaled="false"/>
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/edit_comment"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:hint="@string/default_comment"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/submit_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/submit_comment"/>
-    </LinearLayout>
 </LinearLayout>
