@@ -50,7 +50,7 @@ public class MainScreen extends AppCompatActivity {
             R.string.title_help
     };
 
-    User user = new User();
+    User user;
 
 
     @Override

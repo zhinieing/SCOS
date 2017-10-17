@@ -14,6 +14,10 @@ public class Food implements Serializable{
     private int number;
     private Boolean isOrdered;
 
+    public Food(){
+
+    }
+
     public Food(String foodname, String foodprice, int imageurl, String comment, int number, Boolean isOrdered){
         this.foodname = foodname;
         this.foodprice = foodprice;

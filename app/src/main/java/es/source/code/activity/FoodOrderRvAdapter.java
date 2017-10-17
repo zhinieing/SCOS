@@ -33,10 +33,11 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
     public FoodOrderRvAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView;
 
-        if(isInOrderList)
+        if(isInOrderList) {
             itemView = LayoutInflater.from(context).inflate(R.layout.food_order_rvright_layout, parent, false);
-        else
+        } else {
             itemView = LayoutInflater.from(context).inflate(R.layout.food_order_rvleft_layout, parent, false);
+        }
 
         MyViewHolder myViewHolder = new MyViewHolder(itemView);
         return myViewHolder;
