@@ -148,7 +148,7 @@ public class FoodOrderView extends AppCompatActivity {
 
             foods = new ArrayList<Food>();
             for (int i = 0; i < 15; i++) {
-                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food5, "这是一道热菜", 1, false);
+                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food4, "这是一道热菜", 1, false);
                 foods.add(food1);
             }
 
