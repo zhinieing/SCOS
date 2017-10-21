@@ -1,6 +1,7 @@
 package es.source.code.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -18,13 +19,16 @@ public class SCOSEntry extends AppCompatActivity {
 
     int lastX = 0;
 
-    public final static String EXTRA_MESSAGE = "es.source.code.activity.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry);
         ButterKnife.bind(this);
+
+        SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
+        editor.putInt("loginState", 0);
+        editor.apply();
 
         Picasso.with(this).load(R.drawable.launcher).fit().centerCrop().into(mLaunchImageView);
     }
@@ -41,7 +45,6 @@ public class SCOSEntry extends AppCompatActivity {
                 int offsetX = x - lastX;
                 if (offsetX < -5) {
                     Intent intent = new Intent(this, MainScreen.class);
-                    intent.putExtra(EXTRA_MESSAGE, "FromEntry");
                     startActivity(intent);
                 }
                 break;

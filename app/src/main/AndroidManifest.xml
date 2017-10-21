@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="es.source.code.activity">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
     <permission
         android:name="scos.permission.ACCESSSCOS"
         android:protectionLevel="dangerous" />
@@ -60,6 +63,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="es.source.code.activity.FoodView" />
+        </activity>
+        <activity
+            android:name=".SCOSHelper"
+            android:label="@string/title_activity_scoshelper"
+            android:parentActivityName=".MainScreen"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.source.code.activity.MainScreen" />
         </activity>
     </application>
 

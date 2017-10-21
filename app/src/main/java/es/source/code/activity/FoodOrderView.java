@@ -1,5 +1,6 @@
 package es.source.code.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,10 +67,10 @@ public class FoodOrderView extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
 
-        try{
+        try {
             int startPage = getIntent().getIntExtra("startPage", 0);
             mViewPager.setCurrentItem(startPage);
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -115,6 +117,8 @@ public class FoodOrderView extends AppCompatActivity {
         TextView orderPrice;
         @BindView(R.id.order_submit)
         Button orderSubmit;
+        @BindView(R.id.progressBar)
+        ProgressBar progressBar;
         Unbinder unbinder;
 
         public PlaceholderFragment() {
@@ -148,23 +152,17 @@ public class FoodOrderView extends AppCompatActivity {
                 foods.add(food1);
             }
 
-            /*try{
 
-            } catch (Exception e){
-
-            }*/
-
-
-            try{
+            try {
                 user = (User) getActivity().getIntent().getSerializableExtra("foodOrderViewUser");
-            } catch (Exception e){
+            } catch (Exception e) {
 
             }
 
-            if(user == null){
-                try{
+            if (user == null) {
+                try {
                     user = (User) getActivity().getIntent().getSerializableExtra("foodViewUser");
-                } catch (Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -180,10 +178,13 @@ public class FoodOrderView extends AppCompatActivity {
                     orderSubmit.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(user != null){
-                                if(user.getOldUser())
+                            if (user != null) {
+                                if (user.getOldUser())
                                     Toast.makeText(v.getContext(), "您好，老顾客，本次你可享受7折优惠", Toast.LENGTH_SHORT).show();
                             }
+
+                            OrderPayTask orderPayTask = new OrderPayTask();
+                            orderPayTask.execute((Void) null);
                         }
                     });
                     foodOrderAdapter = new FoodOrderRvAdapter(container.getContext(), foods, true);
@@ -199,6 +200,56 @@ public class FoodOrderView extends AppCompatActivity {
             super.onDestroyView();
             unbinder.unbind();
         }
+
+
+
+        public class OrderPayTask extends AsyncTask<Void, Integer, Boolean>{
+
+            @Override
+            protected void onPreExecute() {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+
+                for(int i = 0; i < 100; i++){
+                    if(isCancelled()){
+                        break;
+                    }
+                    publishProgress(i);
+
+                    try{
+                        Thread.sleep(60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                if(isCancelled()){
+                    return;
+                }
+
+                progressBar.setProgress(values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                progressBar.setVisibility(View.GONE);
+
+                if(success){
+                    orderSubmit.setEnabled(false);
+                    Toast.makeText(getContext(), "本次结账金额为：", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }
+
     }
 
     /**

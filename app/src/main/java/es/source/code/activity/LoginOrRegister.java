@@ -1,6 +1,7 @@
 package es.source.code.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,10 +29,6 @@ import es.source.code.model.User;
  * A login screen that offers login via email/password.
  */
 public class LoginOrRegister extends AppCompatActivity {
-
-    public final static String RETURN_TAG = "es.source.code.activity.RETURN";
-
-    Intent returnIntent = new Intent();
 
     private Handler mHandler = new Handler();
 
@@ -72,6 +69,15 @@ public class LoginOrRegister extends AppCompatActivity {
                 return false;
             }
         });*/
+
+        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        if(pref.getString("username", "") == ""){
+            mEmailSignInButton.setVisibility(View.GONE);
+        } else {
+            mEmailSignUpButton.setVisibility(View.GONE);
+            mEmailView.setText(pref.getString("username", ""));
+        }
+
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -135,21 +141,6 @@ public class LoginOrRegister extends AppCompatActivity {
         } else {
             mProgressView.setVisibility(View.VISIBLE);
 
-            User loginUser = new User();
-            loginUser.setUserName(username);
-            loginUser.setPassword(password);
-            if(oldUser){
-                loginUser.setOldUser(oldUser);
-                returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
-                returnIntent.putExtra("userData", loginUser);
-                setResult(RESULT_OK, returnIntent);
-            } else {
-                loginUser.setOldUser(oldUser);
-                returnIntent.putExtra(RETURN_TAG, "RegisterSuccess");
-                returnIntent.putExtra("userData", loginUser);
-                setResult(RESULT_FIRST_USER, returnIntent);
-            }
-
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -157,6 +148,30 @@ public class LoginOrRegister extends AppCompatActivity {
                     finish();
                 }
             }, 2000);
+
+            User loginUser = new User();
+            loginUser.setUserName(username);
+            loginUser.setPassword(password);
+            if(oldUser){
+                loginUser.setOldUser(oldUser);
+                /*returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
+                returnIntent.putExtra("userData", loginUser);
+                setResult(RESULT_OK, returnIntent);*/
+            } else {
+                loginUser.setOldUser(oldUser);
+                /*returnIntent.putExtra(RETURN_TAG, "RegisterSuccess");
+                returnIntent.putExtra("userData", loginUser);
+                setResult(RESULT_FIRST_USER, returnIntent);*/
+            }
+
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("user", loginUser);
+            setResult(RESULT_OK, returnIntent);
+
+            SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
+            editor.putString("username", username);
+            editor.putInt("loginState", 1);
+            editor.apply();
 
             //mAuthTask = new UserLoginTask(username, password);
             //mAuthTask.execute((Void) null);
@@ -173,8 +188,14 @@ public class LoginOrRegister extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            returnIntent.putExtra(RETURN_TAG, "Return");
-            setResult(RESULT_CANCELED, returnIntent);
+            SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+            if(pref.getString("username", "") != null){
+                SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
+                editor.putInt("loginState", 0);
+                editor.apply();
+            }
+            /*returnIntent.putExtra(RETURN_TAG, "Return");
+            setResult(RESULT_CANCELED, returnIntent);*/
             finish();
         }
         return super.onOptionsItemSelected(item);

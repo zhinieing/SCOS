@@ -35,4 +35,10 @@
     <string name="default_food_price">¥ 30</string>
     <string name="default_comment">写一些备注吧</string>
     <string name="submit_comment">提交备注</string>
+    <string name="title_activity_scoshelper">SCOSHelper</string>
+    <string name="use_contact_helper">用户使用协议</string>
+    <string name="system_helper">关于系统</string>
+    <string name="phone_manul_helper">电话人工帮助</string>
+    <string name="sms_helper">短信帮助</string>
+    <string name="email_helper">邮件帮助</string>
 </resources>

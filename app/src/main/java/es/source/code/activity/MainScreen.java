@@ -3,6 +3,7 @@ package es.source.code.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -50,7 +51,7 @@ public class MainScreen extends AppCompatActivity {
             R.string.title_help
     };
 
-    User user;
+    User user = null;
 
 
     @Override
@@ -75,6 +76,7 @@ public class MainScreen extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent loginIntent;
+                Intent helperIntent;
 
                 if(parent.getCount() == 2){
                     switch (position){
@@ -83,6 +85,8 @@ public class MainScreen extends AppCompatActivity {
                             startActivityForResult(loginIntent, REQUESTCODE);
                             break;
                         case 1:
+                            helperIntent = new Intent(MainScreen.this, SCOSHelper.class);
+                            startActivityForResult(helperIntent, REQUESTCODE);
                             break;
                     }
                 } else {
@@ -102,6 +106,8 @@ public class MainScreen extends AppCompatActivity {
                             startActivityForResult(loginIntent, REQUESTCODE);
                             break;
                         case 3:
+                            helperIntent = new Intent(MainScreen.this, SCOSHelper.class);
+                            startActivityForResult(helperIntent, REQUESTCODE);
                             break;
                     }
                 }
@@ -109,17 +115,12 @@ public class MainScreen extends AppCompatActivity {
         });
 
 
-        try {
-            String message = getIntent().getStringExtra(SCOSEntry.EXTRA_MESSAGE);
-            if (!message.equals("FromEntry")) {
-                list.remove(1);
-                list.remove(0);
-                myAdapter.notifyDataSetChanged();
-            }
-        } catch (Exception e) {
-
+        SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+        if(pref.getInt("loginState", 0) == 0){
+            list.remove(1);
+            list.remove(0);
+            myAdapter.notifyDataSetChanged();
         }
-
 
     }
 
@@ -127,30 +128,35 @@ public class MainScreen extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK || resultCode == RESULT_FIRST_USER) {
-            if (requestCode == REQUESTCODE) {
-                String returnMessage = data.getStringExtra(LoginOrRegister.RETURN_TAG);
 
-                if (returnMessage.equals("RegisterSuccess")){
+        if(gv.getCount() == 4){
+            SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
+            if(pref.getInt("loginState", 0) == 0){
+                list.remove(1);
+                list.remove(0);
+                myAdapter.notifyDataSetChanged();
+            }
+        }
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUESTCODE) {
+
+                user = (User) data.getSerializableExtra("user");
+
+                if (!user.getOldUser()){
                     Toast.makeText(this, "欢迎您成为SCOS新用户", Toast.LENGTH_LONG).show();
                 }
 
-                if (returnMessage.equals("LoginSuccess") || returnMessage.equals("RegisterSuccess")) {
-                    if(gv.getCount() == 2){
-                        list.clear();
+                if(gv.getCount() == 2){
+                    list.clear();
 
-                        for(int i = 0; i < images.length; i++){
-                            Map<String, Object> map = new HashMap<String, Object>();
-                            map.put("image", images[i]);
-                            map.put("text", texts[i]);
-                            list.add(map);
-                        }
-                        myAdapter.notifyDataSetChanged();
+                    for(int i = 0; i < images.length; i++){
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("image", images[i]);
+                        map.put("text", texts[i]);
+                        list.add(map);
                     }
-
-                    user = (User) data.getSerializableExtra("userData");
-                } else {
-                    user = null;
+                    myAdapter.notifyDataSetChanged();
                 }
             }
         }
