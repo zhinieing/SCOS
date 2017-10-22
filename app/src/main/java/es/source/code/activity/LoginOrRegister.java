@@ -189,7 +189,7 @@ public class LoginOrRegister extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             SharedPreferences pref = getSharedPreferences("userdata", MODE_PRIVATE);
-            if(pref.getString("username", "") != null){
+            if(pref.getString("username", "") != ""){
                 SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
                 editor.putInt("loginState", 0);
                 editor.apply();

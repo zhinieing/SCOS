@@ -26,9 +26,6 @@ public class SCOSEntry extends AppCompatActivity {
         setContentView(R.layout.entry);
         ButterKnife.bind(this);
 
-        SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
-        editor.putInt("loginState", 0);
-        editor.apply();
 
         Picasso.with(this).load(R.drawable.launcher).fit().centerCrop().into(mLaunchImageView);
     }
