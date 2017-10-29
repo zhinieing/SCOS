@@ -25,6 +25,8 @@
     <string name="ordered_food">已点菜品</string>
     <string name="look_order">查看订单</string>
     <string name="call_service">呼叫服务</string>
+    <string name="start_asyncservice">启动实时更新</string>
+    <string name="stop_asyncservice">停止实时更新</string>
     <string name="title_activity_food_order_view">FoodOrderView</string>
     <string name="order_number">总数：0</string>
     <string name="order_price">总价：¥0</string>
@@ -36,9 +38,5 @@
     <string name="default_comment">写一些备注吧</string>
     <string name="submit_comment">提交备注</string>
     <string name="title_activity_scoshelper">SCOSHelper</string>
-    <string name="use_contact_helper">用户使用协议</string>
-    <string name="system_helper">关于系统</string>
-    <string name="phone_manul_helper">电话人工帮助</string>
-    <string name="sms_helper">短信帮助</string>
-    <string name="email_helper">邮件帮助</string>
+
 </resources>

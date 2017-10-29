@@ -46,6 +46,7 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHold
     public void onBindViewHolder(final FoodRvAdapter.MyViewHolder holder, final int position) {
         holder.foodName.setText(foods.get(position).getFoodname());
         holder.foodPrice.setText(foods.get(position).getFoodprice());
+        holder.foodNumber.setText(String.valueOf(foods.get(position).getNumber()));
 
         holder.orderFood.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,13 +83,14 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHold
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView foodName, foodPrice;
+        TextView foodName, foodPrice, foodNumber;
         Button orderFood;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             foodName = itemView.findViewById(R.id.food_name);
             foodPrice = itemView.findViewById(R.id.food_price);
+            foodNumber = itemView.findViewById(R.id.food_number);
             orderFood = itemView.findViewById(R.id.order_food);
         }
     }

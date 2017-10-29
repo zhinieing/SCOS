@@ -1,7 +1,14 @@
 package es.source.code.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +17,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import es.source.code.model.Food;
 import es.source.code.model.User;
+import es.source.code.service.ServerObserverService;
 
 public class FoodView extends AppCompatActivity {
 
@@ -46,7 +55,67 @@ public class FoodView extends AppCompatActivity {
      * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private static final String START_ASYNCSERVICE = "启动实时更新";
+
     User user;
+
+
+    String foodName;
+    int foodNumber;
+    private Handler sMessageHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 10:
+                    foodName = msg.getData().getString("food_name");
+                    foodNumber = msg.getData().getInt("food_number");
+
+                    PlaceholderFragment fragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.container_food+":0");
+                    if(fragment != null){
+                        fragment.dataChanged(foodName, foodNumber);
+                    }
+
+                    break;
+
+                default:
+            }
+        }
+    };
+
+
+    private Messenger cMessenger = new Messenger(sMessageHandler);
+
+
+    private Boolean exit = false;
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Messenger sMessenger = new Messenger(service);
+
+            Message message = Message.obtain();
+            if(!exit){
+                message.what = 1;
+            } else {
+                message.what = 0;
+            }
+            message.replyTo = cMessenger;
+
+            try{
+                sMessenger.send(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +171,18 @@ public class FoodView extends AppCompatActivity {
             case R.id.call_service:
 
                 break;
+            case R.id.start_asyncservice:
+                if(START_ASYNCSERVICE.equals(item.getTitle())){
+                    Intent service = new Intent(FoodView.this, ServerObserverService.class);
+                    bindService(service, serviceConnection, BIND_AUTO_CREATE);
+
+                    item.setTitle(R.string.stop_asyncservice);
+                } else {
+                    exit = true;
+                    item.setTitle(R.string.start_asyncservice);
+                }
+                break;
+            default:
         }
 
         return super.onOptionsItemSelected(item);
@@ -150,30 +231,31 @@ public class FoodView extends AppCompatActivity {
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             foodList.setLayoutManager(llm);
+            foodList.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
             foods = new ArrayList<Food>();
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
-                    for (int i = 0; i < 10; i++) {
-                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, R.drawable.food1, "", 1, false);
+                    for (int i = 0; i < 15; i++) {
+                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, R.drawable.food1, "", 10, 0, false);
                         foods.add(food1);
                     }
                     break;
                 case 2:
                     for (int i = 0; i < 15; i++) {
-                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, R.drawable.food2, "", 1, false);
+                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, R.drawable.food2, "", 10, 0, false);
                         foods.add(food2);
                     }
                     break;
                 case 3:
                     for (int i = 0; i < 15; i++) {
-                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, R.drawable.food3, "", 1, false);
+                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, R.drawable.food3, "", 10, 0, false);
                         foods.add(food3);
                     }
                     break;
                 case 4:
                     for (int i = 0; i < 15; i++) {
-                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, R.drawable.food4, "", 1, false);
+                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, R.drawable.food4, "", 10, 0, false);
                         foods.add(food4);
                     }
                     break;
@@ -196,6 +278,17 @@ public class FoodView extends AppCompatActivity {
 
             return rootView;
         }
+
+        public void dataChanged(String foodName, int foodNumber){
+
+            for(Food food : foods){
+                if(foodName.equals(food.getFoodname())){
+                    food.setNumber(foodNumber);
+                }
+            }
+            foodAdapter.notifyDataSetChanged();
+        }
+
 
         @Override
         public void onDestroyView() {

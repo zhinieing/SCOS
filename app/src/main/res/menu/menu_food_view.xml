@@ -20,4 +20,10 @@
         android:orderInCategory="3"
         android:title="@string/call_service"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/start_asyncservice"
+        android:orderInCategory="4"
+        android:title="@string/start_asyncservice"
+        app:showAsAction="never" />
 </menu>

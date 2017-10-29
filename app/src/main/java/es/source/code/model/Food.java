@@ -12,27 +12,21 @@ public class Food implements Serializable{
     private int imageurl;
     private String comment;
     private int number;
+    private int orderedNumber;
     private Boolean isOrdered;
 
     public Food(){
 
     }
 
-    public Food(String foodname, String foodprice, int imageurl, String comment, int number, Boolean isOrdered){
+    public Food(String foodname, String foodprice, int imageurl, String comment, int number, int orderedNumber, Boolean isOrdered){
         this.foodname = foodname;
         this.foodprice = foodprice;
         this.imageurl = imageurl;
         this.comment = comment;
         this.number = number;
+        this.orderedNumber = orderedNumber;
         this.isOrdered = isOrdered;
-    }
-
-    public Boolean getIsOrdered() {
-        return isOrdered;
-    }
-
-    public void setIsOrdered(Boolean ordered) {
-        isOrdered = ordered;
     }
 
     public String getFoodname() {
@@ -73,5 +67,21 @@ public class Food implements Serializable{
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public int getOrderedNumber() {
+        return orderedNumber;
+    }
+
+    public void setOrderedNumber(int orderedNumber) {
+        this.orderedNumber = orderedNumber;
+    }
+
+    public Boolean getIsOrdered() {
+        return isOrdered;
+    }
+
+    public void setIsOrdered(Boolean ordered) {
+        isOrdered = ordered;
     }
 }

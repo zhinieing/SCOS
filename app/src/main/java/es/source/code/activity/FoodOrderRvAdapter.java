@@ -49,12 +49,12 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
         if(isInOrderList){
             holder.foodNameRight.setText(foods.get(position).getFoodname());
             holder.foodPriceRight.setText(foods.get(position).getFoodprice());
-            holder.foodNumberRight.setText(String.valueOf(foods.get(position).getNumber()));
+            holder.foodNumberRight.setText(String.valueOf(foods.get(position).getOrderedNumber()));
             holder.foodCommentRight.setText(foods.get(position).getComment());
         } else {
             holder.foodNameLeft.setText(foods.get(position).getFoodname());
             holder.foodPriceLeft.setText(foods.get(position).getFoodprice());
-            holder.foodNumberLeft.setText(String.valueOf(foods.get(position).getNumber()));
+            holder.foodNumberLeft.setText(String.valueOf(foods.get(position).getOrderedNumber()));
             holder.foodCommentLeft.setText(foods.get(position).getComment());
 
             holder.returnFood.setOnClickListener(new View.OnClickListener() {

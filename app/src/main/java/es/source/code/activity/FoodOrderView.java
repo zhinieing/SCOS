@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -145,10 +146,11 @@ public class FoodOrderView extends AppCompatActivity {
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             foodOrderList.setLayoutManager(llm);
+            foodOrderList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
             foods = new ArrayList<Food>();
             for (int i = 0; i < 15; i++) {
-                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food4, "这是一道热菜", 1, false);
+                Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food4, "这是一道热菜", 10, 0, false);
                 foods.add(food1);
             }
 
