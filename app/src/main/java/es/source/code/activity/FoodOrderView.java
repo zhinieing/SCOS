@@ -25,10 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import es.source.code.model.Food;
 import es.source.code.model.User;
 
@@ -149,10 +153,10 @@ public class FoodOrderView extends AppCompatActivity {
             foodOrderList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
             foods = new ArrayList<Food>();
-            for (int i = 0; i < 15; i++) {
+            /*for (int i = 0; i < 15; i++) {
                 Food food1 = new Food("干锅包菜" + i % 10, "2" + i % 10, R.drawable.food4, "这是一道热菜", 10, 0, false);
                 foods.add(food1);
-            }
+            }*/
 
 
             try {
@@ -181,8 +185,9 @@ public class FoodOrderView extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             if (user != null) {
-                                if (user.getOldUser())
+                                if (user.getOldUser()) {
                                     Toast.makeText(v.getContext(), "您好，老顾客，本次你可享受7折优惠", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             OrderPayTask orderPayTask = new OrderPayTask();

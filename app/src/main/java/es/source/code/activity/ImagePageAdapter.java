@@ -11,7 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -54,12 +55,15 @@ public class ImagePageAdapter extends PagerAdapter {
         final EditText editComment = view.findViewById(R.id.edit_comment);
         Button submitComment = view.findViewById(R.id.submit_comment);
 
-        itemName.setText(foods.get(position).getFoodname());
-        itemPrice.setText("¥" + foods.get(position).getFoodprice());
-        Picasso.with(context)
-                .load(foods.get(position).getImageurl())
-                .fit()
-                .centerCrop()
+        itemName.setText(foods.get(position).getFoodName());
+        itemPrice.setText("¥" + foods.get(position).getFoodPrice());
+
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+
+        Glide.with(context)
+                .load(foods.get(position).getImageUrl())
+                .apply(options)
                 .into(foodImage);
 
 

@@ -44,8 +44,8 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(final FoodRvAdapter.MyViewHolder holder, final int position) {
-        holder.foodName.setText(foods.get(position).getFoodname());
-        holder.foodPrice.setText(foods.get(position).getFoodprice());
+        holder.foodName.setText(foods.get(position).getFoodName());
+        holder.foodPrice.setText("¥" + foods.get(position).getFoodPrice());
         holder.foodNumber.setText(String.valueOf(foods.get(position).getNumber()));
 
         holder.orderFood.setOnClickListener(new View.OnClickListener() {

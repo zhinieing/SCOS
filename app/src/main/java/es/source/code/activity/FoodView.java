@@ -29,10 +29,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import es.source.code.model.Food;
 import es.source.code.model.User;
 import es.source.code.service.ServerObserverService;
@@ -56,24 +61,43 @@ public class FoodView extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
+
     private static final String START_ASYNCSERVICE = "启动实时更新";
 
     User user;
 
 
-    String foodName;
-    int foodNumber;
+
     private Handler sMessageHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 10:
-                    foodName = msg.getData().getString("food_name");
-                    foodNumber = msg.getData().getInt("food_number");
 
-                    PlaceholderFragment fragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.container_food+":0");
+                    Food food = (Food) msg.getData().getSerializable("Food");
+
+                    int index;
+                    switch (food.getKind()){
+                        case "冷菜":
+                            index = 0;
+                            break;
+                        case "热菜":
+                            index = 1;
+                            break;
+                        case "海鲜":
+                            index = 2;
+                            break;
+                        case "酒水":
+                            index = 3;
+                            break;
+                        default:
+                            index = 0;
+
+                    }
+
+                    PlaceholderFragment fragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.container_food+":"+index);
                     if(fragment != null){
-                        fragment.dataChanged(foodName, foodNumber);
+                        fragment.dataChanged(food);
                     }
 
                     break;
@@ -83,30 +107,17 @@ public class FoodView extends AppCompatActivity {
         }
     };
 
-
     private Messenger cMessenger = new Messenger(sMessageHandler);
 
 
-    private Boolean exit = false;
+
+    private Messenger sMessenger;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Messenger sMessenger = new Messenger(service);
+            sMessenger = new Messenger(service);
 
-            Message message = Message.obtain();
-            if(!exit){
-                message.what = 1;
-            } else {
-                message.what = 0;
-            }
-            message.replyTo = cMessenger;
-
-            try{
-                sMessenger.send(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -134,27 +145,26 @@ public class FoodView extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(mViewPager);
 
+        Intent service = new Intent(FoodView.this, ServerObserverService.class);
+        bindService(service, serviceConnection, BIND_AUTO_CREATE);
 
         try{
             user = (User) getIntent().getSerializableExtra("foodViewUser");
         } catch (Exception e){
 
         }
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_food_view, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.ordered_food:
                 Intent orderedFood = new Intent(this, FoodOrderView.class);
@@ -173,19 +183,46 @@ public class FoodView extends AppCompatActivity {
                 break;
             case R.id.start_asyncservice:
                 if(START_ASYNCSERVICE.equals(item.getTitle())){
-                    Intent service = new Intent(FoodView.this, ServerObserverService.class);
-                    bindService(service, serviceConnection, BIND_AUTO_CREATE);
-
                     item.setTitle(R.string.stop_asyncservice);
+
+                    Message message = Message.obtain();
+                    message.what = 1;
+
+                    message.replyTo = cMessenger;
+
+                    try{
+                        sMessenger.send(message);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+
                 } else {
-                    exit = true;
                     item.setTitle(R.string.start_asyncservice);
+
+                    Message message = Message.obtain();
+                    message.what = 0;
+
+                    message.replyTo = cMessenger;
+
+                    try{
+                        sMessenger.send(message);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             default:
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(serviceConnection);
     }
 
     /**
@@ -233,36 +270,85 @@ public class FoodView extends AppCompatActivity {
             foodList.setLayoutManager(llm);
             foodList.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
-            foods = new ArrayList<Food>();
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    for (int i = 0; i < 15; i++) {
-                        Food food1 = new Food("夫妻肺片" + i % 10, "2" + i % 10, R.drawable.food1, "", 10, 0, false);
-                        foods.add(food1);
-                    }
-                    break;
-                case 2:
-                    for (int i = 0; i < 15; i++) {
-                        Food food2 = new Food("水煮肉片" + i % 10, "3" + i % 10, R.drawable.food2, "", 10, 0, false);
-                        foods.add(food2);
-                    }
-                    break;
-                case 3:
-                    for (int i = 0; i < 15; i++) {
-                        Food food3 = new Food("蛤蜊" + i % 10, "4" + i % 10, R.drawable.food3, "", 10, 0, false);
-                        foods.add(food3);
-                    }
-                    break;
-                case 4:
-                    for (int i = 0; i < 15; i++) {
-                        Food food4 = new Food("勇闯天涯" + i % 10, "1" + i % 10, R.drawable.food4, "", 10, 0, false);
-                        foods.add(food4);
-                    }
-                    break;
-            }
 
+            foods = new ArrayList<Food>();
             foodAdapter = new FoodRvAdapter(container.getContext(), foods);
             foodList.setAdapter(foodAdapter);
+
+
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                case 1:
+                    BmobQuery<Food> query1 = new BmobQuery<Food>();
+                    query1.addWhereEqualTo("kind", "冷菜");
+                    query1.order("-createdAt");
+                    query1.setLimit(30);
+                    query1.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                    query1.findObjects(new FindListener<Food>() {
+                        @Override
+                        public void done(List<Food> list, BmobException e) {
+                            for(Food food : list){
+                                foods.add(food);
+                            }
+                            foodAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    break;
+
+                case 2:
+                    BmobQuery<Food> query2 = new BmobQuery<Food>();
+                    query2.addWhereEqualTo("kind", "热菜");
+                    query2.order("-createdAt");
+                    query2.setLimit(30);
+                    query2.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                    query2.findObjects(new FindListener<Food>() {
+                        @Override
+                        public void done(List<Food> list, BmobException e) {
+                            for(Food food : list){
+                                foods.add(food);
+                            }
+                            foodAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    break;
+
+                case 3:
+                    BmobQuery<Food> query3 = new BmobQuery<Food>();
+                    query3.addWhereEqualTo("kind", "海鲜");
+                    query3.order("-createdAt");
+                    query3.setLimit(30);
+                    query3.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                    query3.findObjects(new FindListener<Food>() {
+                        @Override
+                        public void done(List<Food> list, BmobException e) {
+                            for(Food food : list){
+                                foods.add(food);
+                            }
+                            foodAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    break;
+
+                case 4:
+                    BmobQuery<Food> query4 = new BmobQuery<Food>();
+                    query4.addWhereEqualTo("kind", "酒水");
+                    query4.order("-createdAt");
+                    query4.setLimit(30);
+                    query4.setCachePolicy(BmobQuery.CachePolicy.NETWORK_ELSE_CACHE);
+                    query4.findObjects(new FindListener<Food>() {
+                        @Override
+                        public void done(List<Food> list, BmobException e) {
+                            for(Food food : list){
+                                foods.add(food);
+                            }
+                            foodAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    break;
+
+                default:
+            }
+
+
 
             foodAdapter.setOnItemClickListener(new FoodRvAdapter.OnItemClickListener() {
                 @Override
@@ -279,13 +365,8 @@ public class FoodView extends AppCompatActivity {
             return rootView;
         }
 
-        public void dataChanged(String foodName, int foodNumber){
-
-            for(Food food : foods){
-                if(foodName.equals(food.getFoodname())){
-                    food.setNumber(foodNumber);
-                }
-            }
+        public void dataChanged(Food food){
+            foods.add(food);
             foodAdapter.notifyDataSetChanged();
         }
 

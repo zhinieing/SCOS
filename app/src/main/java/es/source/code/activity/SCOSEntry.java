@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 
 public class SCOSEntry extends AppCompatActivity {
 
@@ -27,7 +29,13 @@ public class SCOSEntry extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-        Picasso.with(this).load(R.drawable.launcher).fit().centerCrop().into(mLaunchImageView);
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+
+        Glide.with(this)
+                .load(R.drawable.launcher)
+                .apply(options)
+                .into(mLaunchImageView);
     }
 
     @Override
@@ -47,5 +55,14 @@ public class SCOSEntry extends AppCompatActivity {
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
+        editor.putLong("lastTime", System.currentTimeMillis());
+        editor.apply();
     }
 }

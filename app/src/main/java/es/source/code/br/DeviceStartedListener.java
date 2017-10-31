@@ -10,8 +10,8 @@ public class DeviceStartedListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent updateService = new Intent(context, UpdateService.class);
 
+        Intent updateService = new Intent(context, UpdateService.class);
         context.startService(updateService);
     }
 }

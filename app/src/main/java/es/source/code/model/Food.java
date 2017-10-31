@@ -2,55 +2,59 @@ package es.source.code.model;
 
 import java.io.Serializable;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by pengming on 2017/10/13.
  */
 
-public class Food implements Serializable{
-    private String foodname;
-    private String foodprice;
-    private int imageurl;
+public class Food extends BmobObject implements Serializable{
+    private String foodName;
+    private Integer foodPrice;
+    private String imageUrl;
     private String comment;
-    private int number;
-    private int orderedNumber;
+    private String kind;
+    private Integer number;
+    private Integer orderedNumber;
     private Boolean isOrdered;
 
     public Food(){
 
     }
 
-    public Food(String foodname, String foodprice, int imageurl, String comment, int number, int orderedNumber, Boolean isOrdered){
-        this.foodname = foodname;
-        this.foodprice = foodprice;
-        this.imageurl = imageurl;
+    public Food(String foodName, Integer foodPrice, String imageUrl, String comment, String kind, Integer number, Integer orderedNumber, Boolean isOrdered){
+        this.foodName = foodName;
+        this.foodPrice = foodPrice;
+        this.imageUrl = imageUrl;
         this.comment = comment;
+        this.kind = kind;
         this.number = number;
         this.orderedNumber = orderedNumber;
         this.isOrdered = isOrdered;
     }
 
-    public String getFoodname() {
-        return foodname;
+    public String getFoodName() {
+        return foodName;
     }
 
-    public void setFoodname(String foodname) {
-        this.foodname = foodname;
+    public void setFoodName(String foodName) {
+        this.foodName = foodName;
     }
 
-    public String getFoodprice() {
-        return foodprice;
+    public Integer getFoodPrice() {
+        return foodPrice;
     }
 
-    public void setFoodprice(String foodprice) {
-        this.foodprice = foodprice;
+    public void setFoodPrice(Integer foodPrice) {
+        this.foodPrice = foodPrice;
     }
 
-    public int getImageurl() {
-        return imageurl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageurl(int imageurl) {
-        this.imageurl = imageurl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getComment() {
@@ -61,19 +65,27 @@ public class Food implements Serializable{
         this.comment = comment;
     }
 
-    public int getNumber() {
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
-    public int getOrderedNumber() {
+    public Integer getOrderedNumber() {
         return orderedNumber;
     }
 
-    public void setOrderedNumber(int orderedNumber) {
+    public void setOrderedNumber(Integer orderedNumber) {
         this.orderedNumber = orderedNumber;
     }
 

@@ -47,13 +47,13 @@ public class FoodOrderRvAdapter extends RecyclerView.Adapter<FoodOrderRvAdapter.
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
         if(isInOrderList){
-            holder.foodNameRight.setText(foods.get(position).getFoodname());
-            holder.foodPriceRight.setText(foods.get(position).getFoodprice());
+            holder.foodNameRight.setText(foods.get(position).getFoodName());
+            holder.foodPriceRight.setText("¥" + foods.get(position).getFoodPrice());
             holder.foodNumberRight.setText(String.valueOf(foods.get(position).getOrderedNumber()));
             holder.foodCommentRight.setText(foods.get(position).getComment());
         } else {
-            holder.foodNameLeft.setText(foods.get(position).getFoodname());
-            holder.foodPriceLeft.setText(foods.get(position).getFoodprice());
+            holder.foodNameLeft.setText(foods.get(position).getFoodName());
+            holder.foodPriceLeft.setText("¥" + foods.get(position).getFoodPrice());
             holder.foodNumberLeft.setText(String.valueOf(foods.get(position).getOrderedNumber()));
             holder.foodCommentLeft.setText(foods.get(position).getComment());
 
