@@ -39,7 +39,7 @@ public class UpdateService extends IntentService {
     private static final String CHANNEL_ID = "es.source.code.service";
     private static final String CHANNEL_NAME = "DEFAULT CHANNEL";
 
-    //private ArrayList<Food> foods = null;
+    private ArrayList<Food> foods;
 
 
     public UpdateService() {
@@ -71,12 +71,16 @@ public class UpdateService extends IntentService {
             }
         });*/
 
-        Food food = new Food("凉拌海带丝", 18, "", "",
+        foods = new ArrayList<Food>();
+        Food fd = new Food("凉拌海带丝", 18, "", "",
                 "冷菜", 20, 0, false);
 
+        foods.add(fd);
 
-        if(food != null){
+        if(foods != null){
             Intent detailIntent = new Intent(UpdateService.this, FoodDetailed.class);
+            detailIntent.putExtra("foods", foods);
+            detailIntent.putExtra("position", 0);
             PendingIntent pi = PendingIntent.getActivity(UpdateService.this, 0, detailIntent, 0);
 
 
@@ -96,6 +100,7 @@ public class UpdateService extends IntentService {
             }
 
 
+            Food food = foods.get(0);
             Notification notification = notificationCompatBuilder
                     .setContentTitle("新品上架")
                     .setContentText("菜名:" + food.getFoodName() + " " + "价格:" + "¥" + food.getFoodPrice() + " " + "类型:" + food.getKind())

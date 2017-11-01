@@ -28,6 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +43,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import es.source.code.model.Food;
+import es.source.code.model.Msg;
 import es.source.code.model.User;
 import es.source.code.service.ServerObserverService;
 
@@ -68,7 +73,7 @@ public class FoodView extends AppCompatActivity {
 
 
 
-    private Handler sMessageHandler = new Handler(){
+    /*private Handler sMessageHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
@@ -124,7 +129,35 @@ public class FoodView extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName name) {
 
         }
-    };
+    };*/
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateFoodView(Food event) {
+        int index;
+        switch (event.getKind()){
+            case "冷菜":
+                index = 0;
+                break;
+            case "热菜":
+                index = 1;
+                break;
+            case "海鲜":
+                index = 2;
+                break;
+            case "酒水":
+                index = 3;
+                break;
+            default:
+                index = 0;
+
+        }
+
+        PlaceholderFragment fragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.container_food+":"+index);
+        if(fragment != null){
+            fragment.dataChanged(event);
+        }
+    }
 
 
 
@@ -146,7 +179,11 @@ public class FoodView extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         Intent service = new Intent(FoodView.this, ServerObserverService.class);
-        bindService(service, serviceConnection, BIND_AUTO_CREATE);
+        startService(service);
+        //bindService(service, serviceConnection, BIND_AUTO_CREATE);
+
+
+        EventBus.getDefault().register(this);
 
         try{
             user = (User) getIntent().getSerializableExtra("foodViewUser");
@@ -185,7 +222,7 @@ public class FoodView extends AppCompatActivity {
                 if(START_ASYNCSERVICE.equals(item.getTitle())){
                     item.setTitle(R.string.stop_asyncservice);
 
-                    Message message = Message.obtain();
+                    /*Message message = Message.obtain();
                     message.what = 1;
 
                     message.replyTo = cMessenger;
@@ -194,13 +231,15 @@ public class FoodView extends AppCompatActivity {
                         sMessenger.send(message);
                     } catch (RemoteException e) {
                         e.printStackTrace();
-                    }
+                    }*/
+
+                    EventBus.getDefault().post(new Msg(1));
 
 
                 } else {
                     item.setTitle(R.string.start_asyncservice);
 
-                    Message message = Message.obtain();
+                    /*Message message = Message.obtain();
                     message.what = 0;
 
                     message.replyTo = cMessenger;
@@ -209,7 +248,9 @@ public class FoodView extends AppCompatActivity {
                         sMessenger.send(message);
                     } catch (RemoteException e) {
                         e.printStackTrace();
-                    }
+                    }*/
+
+                    EventBus.getDefault().post(new Msg(0));
                 }
                 break;
             default:
@@ -222,7 +263,10 @@ public class FoodView extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(serviceConnection);
+        //unbindService(serviceConnection);
+        Intent service = new Intent(FoodView.this, ServerObserverService.class);
+        stopService(service);
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -369,6 +413,7 @@ public class FoodView extends AppCompatActivity {
             foods.add(food);
             foodAdapter.notifyDataSetChanged();
         }
+
 
 
         @Override

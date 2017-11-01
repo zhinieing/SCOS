@@ -14,17 +14,22 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.util.List;
 
 import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.listener.ValueEventListener;
+import es.source.code.activity.MyApplication;
 import es.source.code.model.Food;
+import es.source.code.model.Msg;
 
 public class ServerObserverService extends Service {
 
-    private Boolean exit = false;
+    /*private Boolean exit = false;
 
     private Messenger cMessenger;
 
@@ -79,7 +84,42 @@ public class ServerObserverService extends Service {
                 default:
             }
         }
-    };
+    };*/
+
+    private Boolean exit = false;
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void getFoodFromServer(Msg event){
+
+        switch (event.getExit()){
+            case 0:
+                exit = true;
+                break;
+
+            case 1:
+                exit = false;
+
+                while (!exit){
+                    Food food = null;
+
+                    try{
+                        food = new Food("凉拌海带丝", 18, "", "",
+                                "冷菜", 20, 0, false);
+                        Thread.sleep(300);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if(food != null && isAppRunning()){
+                        EventBus.getDefault().post(food);
+                    }
+
+                }
+                break;
+            default:
+        }
+    }
+
 
 
     public Boolean isAppRunning(){
@@ -98,13 +138,25 @@ public class ServerObserverService extends Service {
     }
 
 
-    private Messenger sMessenger = new Messenger(cMessageHandler);
+    //private Messenger sMessenger = new Messenger(cMessageHandler);
 
     public ServerObserverService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return sMessenger.getBinder();
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
