@@ -38,5 +38,6 @@
     <string name="default_comment">写一些备注吧</string>
     <string name="submit_comment">提交备注</string>
     <string name="title_activity_scoshelper">SCOSHelper</string>
+    <string name="clean_notification">清除</string>
 
 </resources>

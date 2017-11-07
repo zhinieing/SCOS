@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +18,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +44,7 @@ import es.source.code.model.User;
  */
 public class LoginOrRegister extends AppCompatActivity {
 
-    private Handler mHandler = new Handler();
+    private UserLoginTask mAuthTask = null;
 
     private Boolean oldUser = true;
 
@@ -100,6 +115,9 @@ public class LoginOrRegister extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+        if (mAuthTask != null) {
+            return;
+        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -138,42 +156,8 @@ public class LoginOrRegister extends AppCompatActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            mProgressView.setVisibility(View.VISIBLE);
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressView.setVisibility(View.GONE);
-                    finish();
-                }
-            }, 2000);
-
-            User loginUser = new User();
-            loginUser.setUserName(username);
-            loginUser.setPassword(password);
-            if(oldUser){
-                loginUser.setOldUser(oldUser);
-                /*returnIntent.putExtra(RETURN_TAG, "LoginSuccess");
-                returnIntent.putExtra("userData", loginUser);
-                setResult(RESULT_OK, returnIntent);*/
-            } else {
-                loginUser.setOldUser(oldUser);
-                /*returnIntent.putExtra(RETURN_TAG, "RegisterSuccess");
-                returnIntent.putExtra("userData", loginUser);
-                setResult(RESULT_FIRST_USER, returnIntent);*/
-            }
-
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("user", loginUser);
-            setResult(RESULT_OK, returnIntent);
-
-            SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
-            editor.putString("username", username);
-            editor.putInt("loginState", 1);
-            editor.apply();
-
-            //mAuthTask = new UserLoginTask(username, password);
-            //mAuthTask.execute((Void) null);
+            mAuthTask = new UserLoginTask(username, password);
+            mAuthTask.execute((Void) null);
         }
     }
 
@@ -193,8 +177,6 @@ public class LoginOrRegister extends AppCompatActivity {
                 editor.putInt("loginState", 0);
                 editor.apply();
             }
-            /*returnIntent.putExtra(RETURN_TAG, "Return");
-            setResult(RESULT_CANCELED, returnIntent);*/
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -202,37 +184,76 @@ public class LoginOrRegister extends AppCompatActivity {
 
 
 
-    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUsername;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String username, String password) {
+            mUsername = username;
             mPassword = password;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mProgressView.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+            try{
+                URL url = new URL("http://10.0.2.2:8080/SCOSServer/LoginValidator");
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(8000);
+                connection.setReadTimeout(8000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setUseCaches(false);
+                connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                connection.setRequestProperty("Charset", "UTF-8");
+                connection.connect();
+
+                DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+
+                String content = "username="+ URLEncoder.encode(mUsername, "UTF-8");
+                content += "&password=" + URLEncoder.encode(mPassword, "UTF-8");
+
+                out.writeBytes(content);
+                out.flush();
+                out.close();
+
+                InputStream in = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null){
+                    response.append(line);
+                }
+
+                return parseJSON(response.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (reader != null){
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(connection != null){
+                    connection.disconnect();
                 }
             }
 
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -241,6 +262,24 @@ public class LoginOrRegister extends AppCompatActivity {
             mProgressView.setVisibility(View.GONE);
 
             if (success) {
+                User loginUser = new User();
+                loginUser.setUserName(mUsername);
+                loginUser.setPassword(mPassword);
+                if(oldUser){
+                    loginUser.setOldUser(oldUser);
+                } else {
+                    loginUser.setOldUser(oldUser);
+                }
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("user", loginUser);
+                setResult(RESULT_OK, returnIntent);
+
+                SharedPreferences.Editor editor = getSharedPreferences("userdata", MODE_PRIVATE).edit();
+                editor.putString("username", mUsername);
+                editor.putInt("loginState", 1);
+                editor.apply();
+
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -253,6 +292,23 @@ public class LoginOrRegister extends AppCompatActivity {
             mAuthTask = null;
             mProgressView.setVisibility(View.GONE);
         }
-    }*/
+    }
+
+    private Boolean parseJSON(String data){
+        int resultcode = 0;
+
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            resultcode = jsonObject.getInt("RESULTCODE");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(resultcode == 1){
+            return true;
+        }
+
+        return false;
+    }
 }
 
